@@ -3,15 +3,48 @@ import logo from './logo.svg';
 import './App.css';
 import styled from 'styled-components';
 
+interface ClicksData {
+  clicks: number;
+  }
+
 function App() {
   const [clicks, setClicks] = React.useState(0);
 
+  React.useEffect(function () {
+    fetch('http://localhost:8000/clicks')
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data: ClicksData) {
+      setClicks(data.clicks);
+    });
+    }, []);
+
   function increaseClicks() {
     setClicks(clicks + 1);
+
+    const data: ClicksData = {
+      clicks: clicks + 1,
+    };
+
+    fetch('http://localhost:8000/clicks', {
+method: 'POST',
+headers: {
+Accept: 'application/json',
+'Content-Type': 'application/json',
+},
+body: JSON.stringify(data),
+});
+
     }
   function resetClicks() {
     setClicks(0);
-  }
+    
+    fetch('http://localhost:8000/clicks', {
+      method: 'DELETE',
+});
+
+};
   return (
     <div className="App">
       <header className="App-header">
@@ -47,12 +80,12 @@ const RedButton = styled.button ({
 });
 const ResetButton = styled.button ({
   height: 50,
-  width: 300,
+  width: 200,
   backgroundColor: '#30d5c8',
   color: '#000000',
   fontSize: 16,
   fontWeight: 700,
-  borderRadius: '10%',
+  borderRadius: '0',
   border: '3px solid #000',
   cursor: 'pointer',
 
